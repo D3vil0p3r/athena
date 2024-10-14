@@ -43,7 +43,7 @@ jobs:
             fi
 
             # Check if the PKGBUILD file is in the expected directory
-            if [[ ! $PKGBUILD_PATH == ./$EXPECTED_DIR/* ]]; then
+            if [[ ! $PKGBUILD_PATH =~ $EXPECTED_DIR ]]; then
               echo "Error: $TOOL_NAME should be in $EXPECTED_DIR but found in $(dirname $PKGBUILD_PATH)."
               exit 1
             fi
