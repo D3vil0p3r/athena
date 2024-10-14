@@ -6,7 +6,6 @@ on:
 jobs:
    validate-and-build:
     name: Build Package
-    if: github.repository_owner == 'Athena-OS' && startsWith('request:new-pkg', github.event.label.name)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
