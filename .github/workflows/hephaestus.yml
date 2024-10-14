@@ -1,7 +1,7 @@
 name: Hephaestus
 on:
   pull_request_target:
-    types: [open]
+    types: [opened, edited, synchronize]
     paths:
       - 'packages/**/PKGBUILD'
 
