@@ -9,9 +9,7 @@ jobs:
    validate-and-build:
     name: Build Package
     runs-on: ubuntu-latest
-    if: |
-      # Check if any PKGBUILD file is in the changes
-      contains(github.event.pull_request.changed_files, 'PKGBUILD')
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
