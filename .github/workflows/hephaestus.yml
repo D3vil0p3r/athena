@@ -1,0 +1,47 @@
+name: Hephaestus
+on:
+  pull_request_target:
+    types: [open, labeled]
+    paths:
+      - 'packages/**/PKGBUILD'
+
+jobs:
+   validate-and-build:
+    name: Build Package
+    if: github.repository_owner == 'Athena-OS' && startsWith('request:new-pkg', github.event.label.name)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for PKGBUILD presence
+        id: pkgbuild_check
+        run: |
+          if [[ ! -f $(find . -type f -name "PKGBUILD") ]]; then
+            echo "Error: No PKGBUILD file found in the PR."
+            exit 1
+          fi
+
+      - name: Directory validation
+        id: dir_validation
+        run: |
+          PKGBUILD_PATH=$(find . -type f -name "PKGBUILD")
+          TOOL_NAME=$(basename $(dirname $PKGBUILD_PATH))
+
+          if [[ $TOOL_NAME == python* ]]; then
+            EXPECTED_DIR="packages/libs/python"
+          elif [[ $TOOL_NAME == perl* ]]; then
+            EXPECTED_DIR="packages/libs/perl"
+          else
+            EXPECTED_DIR="packages/pentesting"
+          fi
+
+          if [[ ! $PKGBUILD_PATH == ./$EXPECTED_DIR/* ]]; then
+            echo "Error: $TOOL_NAME should be in $EXPECTED_DIR but found in $(dirname $PKGBUILD_PATH)."
+            exit 1
+          fi
+
+      - name: Run Podman Container to Build PKGBUILD
+        run: |
+          PKGBUILD_DIR=$(dirname $(find . -type f -name "PKGBUILD"))
+          podman run --rm -v "${GITHUB_WORKSPACE}/${PKGBUILD_DIR}:/build" docker.io/athenaos/hephaestus
