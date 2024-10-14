@@ -14,13 +14,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check for PKGBUILD presence
-        id: pkgbuild_check
+      - name: Check if PKGBUILD file is modified
+        id: check_pkgbuild
         run: |
-          if [[ ! -f $(find . -type f -name "PKGBUILD") ]]; then
-            echo "Error: No PKGBUILD file found in the PR."
-            exit 1
+          # Check if PKGBUILD file is changed in the PR
+          if git diff --name-only origin/main...${{ github.event.pull_request.head.sha }} | grep -q '^PKGBUILD$'; then
+            echo "PKGBUILD file is modified."
+            echo "should_label=true" >> $GITHUB_ENV
+          else
+            echo "should_label=false" >> $GITHUB_ENV
           fi
+
+      - name: Label PR if PKGBUILD file is modified
+        if: env.should_label == 'true' # Run this step only if PKGBUILD is modified
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: '1.has: package'
 
       - name: Directory validation
         id: dir_validation
