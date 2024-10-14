@@ -1,7 +1,7 @@
 name: Hephaestus
 on:
   pull_request_target:
-    types: [ready_for_review]
+    types: [opened, reopened, edited, synchronize, ready_for_review]
     paths:
       - 'packages/**/PKGBUILD'
       
@@ -10,22 +10,29 @@ jobs:
     name: Build Package
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history so we can access the target branch
 
-      - name: Check if PKGBUILD file is modified
+      - name: Fetch main branch
+        run: |
+          # Replace 'main' with your default branch name if necessary
+          git fetch origin main
+
+      - name: Check if PR involves PKGBUILD file
         id: check_pkgbuild
         run: |
-          # Check if PKGBUILD file is changed in the PR
-          if git diff --name-only origin/main...${{ github.event.pull_request.head.sha }} | grep -q '^PKGBUILD$'; then
-            echo "PKGBUILD file is modified."
+          # Check if PKGBUILD file is part of the changes in the PR
+          if git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | grep -q 'PKGBUILD'; then
+            echo "PKGBUILD file is involved in the PR."
             echo "should_label=true" >> $GITHUB_ENV
           else
             echo "should_label=false" >> $GITHUB_ENV
           fi
 
-      - name: Label PR if PKGBUILD file is modified
-        if: env.should_label == 'true' # Run this step only if PKGBUILD is modified
+      - name: Label PR if PKGBUILD file is involved
+        if: env.should_label == 'true'
         uses: actions-ecosystem/action-add-labels@v1
         with:
           labels: '1.has: package'
