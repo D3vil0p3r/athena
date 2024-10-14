@@ -9,7 +9,7 @@ jobs:
    validate-and-build:
     name: Build Package
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.changed_files, 'PKGBUILD')
+    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
