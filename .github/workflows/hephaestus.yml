@@ -54,5 +54,7 @@ jobs:
           PKGBUILD_PATHS=$(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | grep 'PKGBUILD')
 
           for PKGBUILD_PATH in $PKGBUILD_PATHS; do
+              ls -la
+              ls -la "${GITHUB_WORKSPACE}"
               podman run --rm -v "${PKGBUILD_PATH}:/build" docker.io/athenaos/hephaestus -t
           done
