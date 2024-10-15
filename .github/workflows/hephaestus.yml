@@ -14,6 +14,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
           fetch-depth: 0  # Fetch all history so we can access the target branch
 
       - name: Label PR if PKGBUILD file is involved
@@ -52,7 +54,6 @@ jobs:
       - name: Run Podman Container to Build PKGBUILD
         run: |
           PKGBUILD_PATHS=$(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | grep 'PKGBUILD')
-          CHANGED_FILES=($(git diff --name-only --diff-filter=d $THE_LAST_COMMIT HEAD))
           echo "$CHANGED_FILES"
           for PKGBUILD_PATH in $PKGBUILD_PATHS; do
               podman run --rm -v "$(dirname $PKGBUILD_PATH):/build" docker.io/athenaos/hephaestus -t
