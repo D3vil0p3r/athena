@@ -4,14 +4,14 @@ on:
     types: [opened, reopened, edited, synchronize, ready_for_review]
     paths:
       - 'packages/**/PKGBUILD'
-      
+
 jobs:
    validate-and-build:
     name: Build Package
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout Code
+      - name: Checkout PR Head
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
@@ -54,7 +54,7 @@ jobs:
       - name: Run Podman Container to Build PKGBUILD
         run: |
           PKGBUILD_PATHS=$(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | grep 'PKGBUILD')
-          echo "$CHANGED_FILES"
           for PKGBUILD_PATH in $PKGBUILD_PATHS; do
-              podman run --rm -v "$(dirname $PKGBUILD_PATH):/build" docker.io/athenaos/hephaestus -t
+              PARENT_DIR=$(dirname "$PKGBUILD_PATH")
+              podman run --rm -v "$PWD/$PARENT_DIR:/build" docker.io/athenaos/hephaestus -t
           done
