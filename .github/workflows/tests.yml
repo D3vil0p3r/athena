@@ -13,6 +13,12 @@ jobs:
      steps:
        - uses: actions/checkout@v3
        - name: Build Package
+         with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0  # Fetch all history so we can access the target branch
+         
+       - name: Test
          run: |
            CHANGED_FILES=($(git diff --name-only --diff-filter=d $GITHUB_SHA HEAD))
            echo "Ciao $GITHUB_SHA $CHANGED_FILES"
