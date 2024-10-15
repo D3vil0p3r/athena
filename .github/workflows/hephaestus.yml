@@ -52,7 +52,7 @@ jobs:
       - name: Run Podman Container to Build PKGBUILD
         run: |
           PKGBUILD_PATHS=$(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | grep 'PKGBUILD')
-
+          ls -la packages/pentesting/0test
           for PKGBUILD_PATH in $PKGBUILD_PATHS; do
               podman run --rm -v "$(dirname $PKGBUILD_PATH):/build" docker.io/athenaos/hephaestus -t
           done
