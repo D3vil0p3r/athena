@@ -15,9 +15,10 @@ jobs:
        - name: Build Package
          run: |
            CHANGED_FILES=($(git diff --name-only --diff-filter=d $THE_LAST_COMMIT HEAD))
+           echo "Ciao $THE_LAST_COMMIT $CHANGED_FILES"
            for FILE in $CHANGED_FILES; do
               if [[ $(basename $FILE) == "PKGBUILD" ]]; then
-                docker build -t builder -f travis/Dockerfile $(dirname $FILE)
+                docker build -t builder -f Dockerfile-test $(dirname $FILE)
                 docker run --rm builder
               fi
            done
