@@ -7,6 +7,8 @@ on:
 
 jobs:
    validate-and-build:
+    permissions:
+      contents: write
     name: Build Package
     runs-on: ubuntu-latest
 
