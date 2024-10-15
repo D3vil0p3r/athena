@@ -56,5 +56,5 @@ jobs:
           PKGBUILD_PATHS=$(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | grep 'PKGBUILD')
           for PKGBUILD_PATH in $PKGBUILD_PATHS; do
               PARENT_DIR=$(dirname "$PKGBUILD_PATH")
-              podman run --rm -v "$PWD/$PARENT_DIR:/build/sandbox" -w /build/sandbox --userns=keep-id docker.io/athenaos/hephaestus -t
+              podman run --rm -v "$PWD/$PARENT_DIR:/build/output" -w /build/output --userns=keep-id docker.io/athenaos/hephaestus -t
           done
