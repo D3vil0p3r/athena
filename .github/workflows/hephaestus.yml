@@ -51,7 +51,8 @@ jobs:
 
       - name: Run Podman Container to Build PKGBUILD
         run: |
-          PKGBUILD_DIR=$(dirname $(find . -type f -name "PKGBUILD"))
-          echo "$PKGBUILD_DIR"
-          echo "${GITHUB_WORKSPACE}/${PKGBUILD_DIR}"
-          podman run --rm -v "${GITHUB_WORKSPACE}/${PKGBUILD_DIR}:/build" docker.io/athenaos/hephaestus
+          PKGBUILD_PATHS=$(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | grep 'PKGBUILD')
+
+          for PKGBUILD_PATH in $PKGBUILD_PATHS; do
+              podman run --rm -v "${PKGBUILD_PATH}:/build" docker.io/athenaos/hephaestus -t
+          done
