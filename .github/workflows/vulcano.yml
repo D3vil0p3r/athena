@@ -32,7 +32,7 @@ jobs:
 
       - name: Check Styling
         run: |
-          CHANGED_FILES=($(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.ref }} | tr '\n' ' '))
+          CHANGED_FILES=($(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | tr '\n' ' '))
           for FILE in "${CHANGED_FILES[@]}"; do
             if [[ $(basename "$FILE") == "PKGBUILD" ]]; then
               echo "Validating $FILE..."
@@ -48,7 +48,7 @@ jobs:
 
       - name: Build Package
         run: |
-          CHANGED_FILES=($(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.ref }} | tr '\n' ' '))
+          CHANGED_FILES=($(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }} | tr '\n' ' '))
           for FILE in "${CHANGED_FILES[@]}"; do
             if [[ $(basename "$FILE") == "PKGBUILD" ]]; then
               echo "Building $FILE..."
