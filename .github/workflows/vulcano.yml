@@ -11,13 +11,12 @@ on:
 
 jobs:
   labeling:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v4
-       - name: Labeling
-         uses: actions-ecosystem/action-add-labels@v1
-         with:
-           labels: '1.has: package'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Labeling
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: '1.has: package'
   pkgcheck:
     runs-on: ubuntu-latest
     steps:
