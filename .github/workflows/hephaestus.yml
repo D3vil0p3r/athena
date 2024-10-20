@@ -6,6 +6,27 @@ on:
       - 'packages/**/PKGBUILD'
 
 jobs:
+   buildnew:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR Head
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0  # Fetch all history so we can access the target branch
+
+      - name: Directory validation
+        id: dir_validation
+        run: |
+          # Find all PKGBUILD files involved in the PR
+           PKGBUILD_PATHS=$(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.ref }})
+           echo "Changed files: $PKGBUILD_PATHS"
+           PKGBUILD_PATHS=$(git diff --name-only --diff-filter=ACMRT origin/main...${{ github.event.pull_request.head.sha }})
+           echo "Changed files v2: $PKGBUILD_PATHS"
+    
    validate-and-build:
     name: Build Package
     runs-on: ubuntu-latest
